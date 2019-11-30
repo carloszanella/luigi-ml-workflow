@@ -37,6 +37,7 @@ class TrainModel(luigi.Task):
         return luigi.LocalTarget(path)
 
     def run(self):
+        # print('\n' + self.input().path + '\n')
         train_model(self.neighbors, self.input().path, self.n_samples, self.std)
 
 
