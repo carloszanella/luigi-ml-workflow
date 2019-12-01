@@ -4,6 +4,8 @@ from sklearn.neighbors import KNeighborsClassifier
 import pickle
 import numpy as np
 from pathlib import Path
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 def gen_data(n_samples, std):
@@ -41,6 +43,23 @@ def predict(data_path, model_path):
 
     predictions = model.predict(ds.drop(columns=['target']))
     np.savetxt(path, predictions)
+
+
+def make_plots(n_samples, std, neighbors=5):
+    p = Path()
+    data_path = p / 'data' / f"dataset-{n_samples}-{std}.csv"
+    pred_path = p / 'predictions' / f"predictions-{n_samples}-{std}-{neighbors}.pkl.txt"
+    output_path = p / 'results' / f"results-{n_samples}-{std}-{neighbors}.png"
+
+    df = pd.read_csv(data_path)
+    df['predictions'] = np.loadtxt(pred_path)
+    df['correct'] = (df['predictions'] == df['target'])
+
+    fig, axes = plt.subplots(2, 1, sharex=True, sharey=True, figsize=(12,10))
+    sns.scatterplot(data=df, x='feat_1', y='feat_2', hue='predictions', ax=axes[0])
+    sns.scatterplot(data=df, x='feat_1', y='feat_2', hue='correct', ax=axes[1])
+    plt.savefig(output_path)
+    plt.close()
 
 
 """

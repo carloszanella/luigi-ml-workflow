@@ -1,5 +1,5 @@
 import luigi
-from base_functions import gen_data, train_model, predict
+from base_functions import gen_data, train_model, predict, make_plots
 
 # 1. Generate Data
 class GenerateData(luigi.Task):
@@ -56,20 +56,26 @@ class PredictValues(luigi.Task):
         return deps
 
     def output(self):
-        path = f"./predictions/predictions-{self.n_samples}-{self.std}-{self.neighbors}.pkl"
+        path = f"./predictions/predictions-{self.n_samples}-{self.std}-{self.neighbors}.pkl.txt"
         return luigi.LocalTarget(path)
 
     def run(self):
         predict(self.input()[1].path, self.input()[0].path)
 
 
-# 4. Evaluate Performance
-class EvaluatePerformance(luigi.Task):
+# 4. Plot results
+class PlotResults(luigi.Task):
+
+    n_samples = luigi.IntParameter()
+    std = luigi.FloatParameter()
+    neighbors = luigi.IntParameter(default=5)
+
     def requires(self):
-        pass
+        return PredictValues(n_samples=self.n_samples, std=self.std, neighbors=self.neighbors)
 
     def output(self):
-        pass
+        path = f"./results/results-{self.n_samples}-{self.std}-{self.neighbors}.png"
+        return luigi.LocalTarget(path)
 
     def run(self):
-        pass
+        make_plots(self.n_samples, self.std, self.neighbors)
