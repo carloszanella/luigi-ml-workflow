@@ -2,7 +2,7 @@
 /predictions/*
 /model/*
 /data/*
-
+/__pycache__/
 !results/.gitkeep
 !predictions/.gitkeep
 !model/.gitkeep
