@@ -1,0 +1,9 @@
+/results/*
+/predictions/*
+/model/*
+/data/*
+
+!results/.gitkeep
+!predictions/.gitkeep
+!model/.gitkeep
+!data/.gitkeep

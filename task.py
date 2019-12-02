@@ -8,8 +8,6 @@ class GenerateData(luigi.Task):
     std = luigi.FloatParameter()
 
     # First Task, doesn't require anything
-    # def requires(self):
-    #     pass
 
     def output(self):
         # The generated data
@@ -27,7 +25,6 @@ class TrainModel(luigi.Task):
     n_samples = luigi.IntParameter()
     std = luigi.FloatParameter()
     neighbors = luigi.IntParameter(default=5)
-
 
     def requires(self):
         return GenerateData(n_samples=self.n_samples, std=self.std)
@@ -50,8 +47,10 @@ class PredictValues(luigi.Task):
 
     def requires(self):
         deps = [
-            TrainModel(n_samples=self.n_samples, std=self.std, neighbors=self.neighbors),
-            GenerateData(n_samples=self.n_samples, std=self.std)
+            TrainModel(
+                n_samples=self.n_samples, std=self.std, neighbors=self.neighbors
+            ),
+            GenerateData(n_samples=self.n_samples, std=self.std),
         ]
         return deps
 
@@ -71,7 +70,9 @@ class PlotResults(luigi.Task):
     neighbors = luigi.IntParameter(default=5)
 
     def requires(self):
-        return PredictValues(n_samples=self.n_samples, std=self.std, neighbors=self.neighbors)
+        return PredictValues(
+            n_samples=self.n_samples, std=self.std, neighbors=self.neighbors
+        )
 
     def output(self):
         path = f"./results/results-{self.n_samples}-{self.std}-{self.neighbors}.png"
